@@ -15,3 +15,6 @@ deploy-collector:
 
 delete-collector:
 	oc delete -f ${COLLECTOR_DEPLOYMENT_PATH}
+
+lint:
+	checkmake Makefile

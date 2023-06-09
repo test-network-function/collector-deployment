@@ -1,0 +1,39 @@
+name: Test Incoming Changes
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+env:
+  CM_BIN: /usr/local/bin/checkmake
+  CM_URL_LINUX: https://github.com/mrtazz/checkmake/releases/download/0.2.2/checkmake-0.2.2.linux.amd64 # yamllint disable-line
+
+jobs:
+  lint:
+    name: Run Linters
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, macos-latest]
+  
+    steps:
+      - name: Install checkmake (Linux)
+        run: curl --location --output $CM_BIN --silent $CM_URL_LINUX
+        if: runner.os == 'Linux'
+
+      - run: chmod +x $CM_BIN
+        if: runner.os == 'Linux'
+
+      - name: Install checkmake (MacOS)
+        run: brew install checkmake
+        if: runner.os == 'macOS'
+
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.sha }}
+      
+      - name: Run linters
+        run: make lint
