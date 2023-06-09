@@ -8,3 +8,9 @@ deploy-mysql:
 delete-mysql:
 	oc delete -f ${MYSQL_DEPLOYMENT_PATH}
 	oc delete -f ${MYSQL_PV_PATH}
+
+deploy-collector:
+	oc apply -f ./k8s/collector-deployment.yaml
+
+delete-collector:
+	oc delete -f ./k8s/collector-deployment.yaml
