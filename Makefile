@@ -2,6 +2,8 @@ MYSQL_PV_PATH = ./k8s/mysql-pv.yaml
 MYSQL_DEPLOYMENT_PATH = ./k8s/mysql-deployment.yaml
 COLLECTOR_DEPLOYMENT_PATH = ./k8s/collector-deployment.yml
 
+.PHONY: deploy-mysql delete-mysql deploy-collector delete-collector lint all clean test
+
 deploy-mysql:
 	oc apply -f ${MYSQL_PV_PATH}
 	oc apply -f ${MYSQL_DEPLOYMENT_PATH}
