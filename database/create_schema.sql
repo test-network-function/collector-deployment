@@ -1,7 +1,7 @@
 create database if not exists cnf;
 use cnf;
 
-create table claim (
+create table if not exists claim (
   id int not null AUTO_INCREMENT,
   cnf_version varchar(50) not null,
   created_by  varchar(50) not null,
@@ -11,7 +11,7 @@ create table claim (
   primary key (id)
 );
 
-create table claim_result (
+create table if not exists claim_result (
   id int not null AUTO_INCREMENT,
   claim_id int not null,
   suite_name varchar(255),
@@ -21,4 +21,14 @@ create table claim_result (
   foreign key (claim_id) references claim(id)
 );
 
-create index claim_upload_datetime on claim (upload_time);
+set @x := (
+  select count(*) from information_schema.statistics
+  where table_name = 'claim'
+  and index_name = 'claim_upload_datetime'
+  and table_schema = database());
+set @sql := if( 
+  @x > 0, 
+  'select ''Index exists.''', 
+  'create index claim_upload_datetime on claim (upload_time);');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
